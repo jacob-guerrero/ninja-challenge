@@ -31,31 +31,48 @@ function getClockwiseSweep(
   return sweep;
 }
 
+export type SimulationStep = {
+  stepIndex: number;
+  pivot: Column;
+  ropeLength: number;
+  startHeading: number;
+  endHeading: number;
+  sweepAngle: number;
+  ninjaStart: Point;
+  ninjaEnd: Point;
+  nextPivot: Column | null;
+};
+
+export type SimulationResult = {
+  finalPivotId: number;
+  steps: SimulationStep[];
+};
+
 /**
- * Simulates the Ninja Rope Wrap to determine the final pivot column.
+ * Simulates the Ninja Rope Wrap to determine the final pivot column,
+ * recording all intermediate states for visualization.
  */
-function lastColumn(
+export function simulateRopeWrap(
   columns: Column[],
   personStart: Point,
   initialPivotId: number,
-): number {
+): SimulationResult {
   const EPSILON = 1e-9;
+  const steps: SimulationStep[] = [];
 
-  // 1. Establish initial simulation state
   let currentPivot = columns.find((col) => col.id === initialPivotId);
   if (!currentPivot) {
     throw new Error(`Initial pivot with ID ${initialPivotId} not found.`);
   }
 
   let ropeLength = getDistance(currentPivot, personStart);
-
-  // The initial heading points from the pivot to the ninja
   let currentHeading = Math.atan2(
     personStart.y - currentPivot.y,
     personStart.x - currentPivot.x,
   );
+  let currentNinjaPos = { ...personStart };
+  let stepIndex = 0;
 
-  // 2. Loop until termination conditions are met
   while (true) {
     let nextPivot: Column | null = null;
     let minSweep = Infinity;
@@ -97,19 +114,65 @@ function lastColumn(
     // Termination Condition 1 & 2:
     // No reachable columns found, or a full 360-sweep completed without interference
     if (!nextPivot) {
-      return currentPivot.id;
+      steps.push({
+        stepIndex,
+        pivot: currentPivot,
+        ropeLength,
+        startHeading: currentHeading,
+        endHeading: currentHeading - 2 * Math.PI,
+        sweepAngle: 2 * Math.PI,
+        ninjaStart: currentNinjaPos,
+        ninjaEnd: currentNinjaPos,
+        nextPivot: null,
+      });
+
+      return {
+        finalPivotId: currentPivot.id,
+        steps,
+      };
     }
 
-    // 3. Apply state changes for the next iteration
-    ropeLength -= minDistToNextPivot;
-    // The new heading is the continuation of the ray from the previous pivot
-    // to the new pivot (since the rope goes straight between them before wrapping).
-    currentHeading = Math.atan2(
+    const endHeading = Math.atan2(
       nextPivot.y - currentPivot.y,
       nextPivot.x - currentPivot.x,
     );
+
+    const ninjaEnd = {
+      x: currentPivot.x + ropeLength * Math.cos(endHeading),
+      y: currentPivot.y + ropeLength * Math.sin(endHeading),
+    };
+
+    // Apply state changes for the next iteration
+    steps.push({
+      stepIndex,
+      pivot: currentPivot,
+      ropeLength,
+      startHeading: currentHeading,
+      endHeading,
+      sweepAngle: minSweep,
+      ninjaStart: currentNinjaPos,
+      ninjaEnd,
+      nextPivot,
+    });
+
+    ropeLength -= minDistToNextPivot;
+    currentHeading = endHeading;
     currentPivot = nextPivot;
+    currentNinjaPos = ninjaEnd;
+    stepIndex++;
   }
+}
+
+/**
+ * Simulates the Ninja Rope Wrap to determine the final pivot column.
+ * Backward compatible wrapper for the challenge submission.
+ */
+export function lastColumn(
+  columns: Column[],
+  personStart: Point,
+  initialPivotId: number,
+): number {
+  return simulateRopeWrap(columns, personStart, initialPivotId).finalPivotId;
 }
 
 // Prueba basica
