@@ -281,9 +281,6 @@ onUnmounted(() => {
         <h1 class="h3 fw-bold text-white mb-1 glow-primary">Ninja Rope Wrap</h1>
         <p class="text-muted mb-0">Simulador interactivo del envoltorio de cuerda del ninja</p>
       </div>
-      <div>
-        <span class="badge bg-secondary p-2 font-monospace">TS Engine v1.0</span>
-      </div>
     </header>
 
     <div class="row g-4">

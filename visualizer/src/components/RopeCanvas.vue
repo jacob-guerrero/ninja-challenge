@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 import type { Column, Point, SimulationStep } from '../logic/ropeWrap';
 
 const props = defineProps<{
@@ -376,7 +376,7 @@ const stopNinjaDrag = () => {
     </svg>
 
     <!-- Instructional Overlay Toast -->
-    <div class="position-absolute bottom-0 start-0 m-3 p-2 bg-dark rounded border border-secondary text-muted" style="font-size: 11px; pointer-events: none; background-opacity: 0.95;">
+    <div class="position-absolute bottom-0 start-0 m-3 p-2 bg-dark rounded border border-secondary text-muted" style="font-size: 11px; pointer-events: none;">
       💡 <strong>Interactividad:</strong><br />
       • Clic en espacio vacío: Añadir Columna<br />
       • Clic en columna: Establecer como Pivote Inicial<br />
