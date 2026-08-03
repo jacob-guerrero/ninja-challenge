@@ -14,7 +14,7 @@ export default defineConfig({
           'color-functions',
           'if-function'
         ],
-      },
+      } as any,
     },
   },
 })
