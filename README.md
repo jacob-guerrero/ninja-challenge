@@ -1,6 +1,8 @@
 # Ninja Rope Wrap — AI-Assisted Coding Challenge
 
-Este repositorio contiene la solución e implementación algorítmica para el desafío **"Ninja Rope Wrap"**, además del plan de desarrollo para su correspondiente visualizador interactivo.
+Este repositorio contiene la solución e implementación algorítmica para el desafío **"Ninja Rope Wrap"**, junto con su visualizador interactivo desarrollado en Vue 3 y TypeScript.
+
+Demo: **[Ver Demo en Vivo (Interactive Visualizer)](https://ninja-challenge.vercel.app/)**
 
 ---
 
